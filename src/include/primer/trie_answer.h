@@ -1,7 +1,7 @@
 #include "primer/trie.h"
 
-// TODO(student): fill your answer here
+// TODO(student): Cai
 
-const uint32_t CASE_1_YOUR_ANSWER = 0;
-const uint32_t CASE_2_YOUR_ANSWER = 0;
-const uint32_t CASE_3_YOUR_ANSWER = 0;
+const uint32_t CASE_1_YOUR_ANSWER = 8;
+const uint32_t CASE_2_YOUR_ANSWER = 1;
+const uint32_t CASE_3_YOUR_ANSWER = 42;
