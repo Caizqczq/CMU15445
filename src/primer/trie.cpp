@@ -133,7 +133,7 @@ auto RemoveCycle(const std::shared_ptr<TrieNode> &new_rootty, std::string_view k
 }
 
 auto Trie::Remove(std::string_view key) const -> Trie {
- if (this->root_ == nullptr) {
+  if (this->root_ == nullptr) {
     return *this;
   }
   // key是空的
@@ -168,7 +168,6 @@ auto Trie::Remove(std::string_view key) const -> Trie {
   // You should walk through the trie and remove nodes if necessary. If the node doesn't contain a value any more,
   // you should convert it to `TrieNode`. If a node doesn't have children any more, you should remove it.
 }
-
 
 // Below are explicit instantiation of template functions.
 //
