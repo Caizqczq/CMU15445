@@ -17,6 +17,7 @@
 #include "common/config.h"
 #include "common/exception.h"
 
+
 namespace bustub {
 
 LRUKReplacer::LRUKReplacer(size_t num_frames, size_t k) : replacer_size_(num_frames), k_(k) {}
@@ -63,12 +64,78 @@ auto LRUKReplacer::Evict(frame_id_t *frame_id) -> bool {
     
  }
 
-void LRUKReplacer::RecordAccess(frame_id_t frame_id, [[maybe_unused]] AccessType access_type) {}
+void LRUKReplacer::RecordAccess(frame_id_t frame_id, [[maybe_unused]] AccessType access_type) {
+    std::lock_guard<std::mutex>lock(latch_);
 
-void LRUKReplacer::SetEvictable(frame_id_t frame_id, bool set_evictable) {}
+    //检查frame_id是否有效
+    if(static_cast<size_t>(frame_id)>=replacer_size_){
+        throw std::out_of_range("Invalid frame_id");
+    }
 
-void LRUKReplacer::Remove(frame_id_t frame_id) {}
+    current_timestamp_++;
 
-auto LRUKReplacer::Size() -> size_t { return 0; }
+    //如果frame_id不在记录中,初始化
+    if(node_store_.find(frame_id)==node_store_.end()){
+        node_store_[frame_id]=LRUKNode(k_);
+    }
+
+    //记录访问历史
+    LRUKNode&node=node_store_[frame_id];
+    node.history_.push_back(current_timestamp_);
+
+    //保证只存在k条历史访问记录
+    if(node.history_.size()>k_){
+        node.history_.pop_front();
+    }
+
+}
+
+void LRUKReplacer::SetEvictable(frame_id_t frame_id, bool set_evictable) {
+      std::lock_guard<std::mutex>lock(latch_);
+       //检查frame_id是否有效
+    if(static_cast<size_t>(frame_id)>=replacer_size_){
+        throw std::out_of_range("Invalid frame_id");
+    }
+
+    //若帧不存在,直接返回
+    if(node_store_.find(frame_id)==node_store_.end()){
+        return;
+    }
+
+    LRUKNode&node=node_store_[frame_id];
+
+    if (node.is_evictable_ != set_evictable) {
+        node.is_evictable_ = set_evictable;
+        // 更新可驱逐帧的数量
+        curr_size_ += set_evictable ? 1 : -1;
+    }
+
+}
+
+void LRUKReplacer::Remove(frame_id_t frame_id) {
+    std::lock_guard<std::mutex>lock(latch_);
+
+
+       //检查frame_id是否有效
+    if(static_cast<size_t>(frame_id)>=replacer_size_){
+        throw std::out_of_range("Invalid frame_id");
+    }
+
+    if (node_store_.find(frame_id) == node_store_.end()) {
+        return;  // 如果帧不存在，直接返回
+    }
+    if(node_store_[frame_id].is_evictable_){
+        --curr_size_;
+    }
+    node_store_.erase(frame_id);
+    
+}
+
+auto LRUKReplacer::Size() -> size_t {
+    std::lock_guard<std::mutex> lock(latch_);
+    return curr_size_;
+     
+}
 
 }  // namespace bustub
+

@@ -29,6 +29,7 @@ class LRUKNode {
  public:
   /** History of last seen K timestamps of this page. Least recent timestamp stored in front. */
   // Remove maybe_unused if you start using them. Feel free to change the member variables as you want.
+    LRUKNode() = default;  // 
   explicit LRUKNode(size_t k):k_(k){};
 
     std::list<size_t> history_;
