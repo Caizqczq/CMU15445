@@ -72,7 +72,7 @@ void LRUKReplacer::RecordAccess(frame_id_t frame_id, [[maybe_unused]] AccessType
         throw std::out_of_range("Invalid frame_id");
     }
 
-    current_timestamp_++;
+
 
     //如果frame_id不在记录中,初始化
     if(node_store_.find(frame_id)==node_store_.end()){
@@ -87,6 +87,8 @@ void LRUKReplacer::RecordAccess(frame_id_t frame_id, [[maybe_unused]] AccessType
     if(node.history_.size()>k_){
         node.history_.pop_front();
     }
+
+    current_timestamp_++;
 
 }
 
@@ -114,8 +116,6 @@ void LRUKReplacer::SetEvictable(frame_id_t frame_id, bool set_evictable) {
 
 void LRUKReplacer::Remove(frame_id_t frame_id) {
     std::lock_guard<std::mutex>lock(latch_);
-
-
        //检查frame_id是否有效
     if(static_cast<size_t>(frame_id)>=replacer_size_){
         throw std::out_of_range("Invalid frame_id");
