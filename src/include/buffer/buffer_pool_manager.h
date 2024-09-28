@@ -69,7 +69,7 @@ class BufferPoolManager {
    * @param[out] page_id id of created page
    * @return nullptr if no new pages could be created, otherwise pointer to new page
    */
-  auto NewPage(page_id_t *page_id) -> Page *;
+  auto NewPage(page_id_t* page_id) -> Page *;
 
   /**
    * TODO(P1): Add implementation
