@@ -65,8 +65,7 @@ class StringExpression : public AbstractExpression {
     return {ret};
   }
 
-  auto Evaluate
-  (const Tuple *tuple, const Schema &schema) const -> Value override {
+  auto Evaluate(const Tuple *tuple, const Schema &schema) const -> Value override {
     Value val = GetChildAt(0)->Evaluate(tuple, schema);
     auto str = val.GetAs<char *>();
     return ValueFactory::GetVarcharValue(Compute(str));
